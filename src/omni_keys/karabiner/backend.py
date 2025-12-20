@@ -7,6 +7,8 @@ from omni_keys.shortcut.ir import Emit, RuleIR
 from .models.condition import AppCondition, ConditionType
 from .models.from_event import FromEvent
 from .models.manipulator import Manipulator
+from .models.modifier import Modifier
+from .models.modifiers import FromModifiers
 from .models.rule import Rule
 from .models.to_event import ToEvent
 from .sequence_strategy import StateMachineStrategy
@@ -46,10 +48,22 @@ class KarabinerBackend:
         if not isinstance(rule.action, Emit):
             raise ValueError("only Emit action is supported")
 
-        if len(step.keys) == 1:
-            from_event = FromEvent(key_code=step.keys[0])
-        else:
-            from_event = FromEvent(simultaneous=list(step.keys))
+        from_mods = None
+        if step.modifiers:
+            from_mods = FromModifiers(
+                mandatory=_map_modifiers(step.modifiers),
+                optional=[Modifier.ANY],
+            )
 
-        to_event = ToEvent(key_code=rule.action.chord.key)
+        if len(step.keys) == 1:
+            from_event = FromEvent(key_code=step.keys[0], modifiers=from_mods)
+        else:
+            from_event = FromEvent(simultaneous=list(step.keys), modifiers=from_mods)
+
+        to_mods = _map_modifiers(rule.action.chord.modifiers) if rule.action.chord.modifiers else None
+        to_event = ToEvent(key_code=rule.action.chord.key, modifiers=to_mods)
         return Manipulator(from_=from_event, to=[to_event])
+
+
+def _map_modifiers(mods) -> list[Modifier]:
+    return [Modifier(mod.value) for mod in sorted(mods, key=lambda m: m.value)]
