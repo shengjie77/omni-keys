@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from .condition import Condition
-from .condition_type import ConditionType
-from .from_event import FromEvent
-from .key_code import KeyCode
-from .manipulator import Manipulator
-from .rule import Rule
-from .to_event import ToEvent
+from .models.condition import Condition
+from .models.condition_type import ConditionType
+from .models.from_event import FromEvent
+from .models.key_code import KeyCode
+from .models.manipulator import Manipulator
+from .models.rule import Rule
+from .models.to_event import ToEvent
 
 __all__ = [
     "Condition",

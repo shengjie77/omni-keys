@@ -1,24 +1,40 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Optional, Set
+from typing import List, Optional, Set, TypeAlias
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Modifier(str, Enum):
     """Frontend (platform-agnostic) modifier tokens; must distinguish left/right."""
 
+    COMMAND = "command"
+    CONTROL = "control"
+    OPTION = "option"
+    SHIFT = "shift"
+    FN = "fn"
+    CAPS_LOCK = "caps_lock"
 
-class KeyCode(str):
-    """Frontend (platform-agnostic) key token."""
+    LEFT_COMMAND = "left_command"
+    LEFT_CONTROL = "left_control"
+    LEFT_OPTION = "left_option"
+    LEFT_SHIFT = "left_shift"
+
+    RIGHT_COMMAND = "right_command"
+    RIGHT_CONTROL = "right_control"
+    RIGHT_OPTION = "right_option"
+    RIGHT_SHIFT = "right_shift"
+
+
+KeyCode: TypeAlias = str
 
 
 class Chord(BaseModel):
     """One trigger step: simultaneous keys (+ optional modifiers)."""
 
     keys: List[KeyCode]
-    modifiers: Set[Modifier] = set()
+    modifiers: Set[Modifier] = Field(default_factory=set)
 
 
 class Hotkey(BaseModel):
@@ -31,7 +47,7 @@ class KeyChord(BaseModel):
     """The emitted key chord (one key + optional modifiers)."""
 
     key: KeyCode
-    modifiers: Set[Modifier] = set()
+    modifiers: Set[Modifier] = Field(default_factory=set)
 
 
 class Action(BaseModel):
@@ -47,6 +63,8 @@ class Emit(Action):
 class When(BaseModel):
     """User-visible conditions (e.g., frontmost apps, modes)."""
 
+    applications: Optional[List[str]] = None
+
 
 class RuleIR(BaseModel):
     """Frontend IR rule: trigger -> action, optionally gated by when."""
@@ -54,4 +72,3 @@ class RuleIR(BaseModel):
     trigger: Hotkey
     action: Action
     when: Optional[When] = None
-
