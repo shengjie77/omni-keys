@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from src.shortcut.ir import RuleIR
+from omni_keys.shortcut.ir import RuleIR
 
 from .models.rule import Rule
 from .sequence_strategy import SequenceLoweringStrategy

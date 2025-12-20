@@ -1,0 +1,21 @@
+description = 'Test Shortcut'
+
+[when]
+applications = [
+  "^com\\.jetbrains\\.",
+  "^com\\.google\\.android\\.studio$",
+]
+
+[alias.key]
+leader_key = "f18"
+
+[alias.mod]
+cmd  = "command"
+ctrl = "control"
+opt  = "option"
+alt  = "option"
+
+
+[[rule]]
+trigger = "leader_key>w>v"
+emit    = "cmd+shift+opt+1"

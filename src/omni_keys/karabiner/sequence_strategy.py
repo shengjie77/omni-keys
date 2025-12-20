@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Protocol
 
-from src.shortcut.ir import RuleIR
+from omni_keys.shortcut.ir import RuleIR
 
 from .models.manipulator import Manipulator
 
