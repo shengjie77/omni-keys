@@ -23,5 +23,5 @@ class ToEvent(BaseModel):
     
 class Variable(BaseModel):
     name: str
-    value: str | int
+    value: str | int | bool
 
