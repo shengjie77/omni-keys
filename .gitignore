@@ -5,3 +5,4 @@ out/*
 !out/.gitkeep
 
 .pytest_cache
+omni_keys.egg-info
