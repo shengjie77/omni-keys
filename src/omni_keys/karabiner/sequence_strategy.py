@@ -18,4 +18,3 @@ class StateMachineStrategy:
 
     def lower(self, rule: RuleIR, *, namespace: str) -> List[Manipulator]:
         raise NotImplementedError
-
