@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from omni_keys.karabiner.backend import KarabinerBackend
 from omni_keys.shortcut.ir import Chord, Emit, Hotkey, KeyChord, RuleIR, When
+from omni_keys.karabiner.models.condition import VarCondition
 
 
 def test_leader_hold_and_tap_generated() -> None:
@@ -41,3 +42,32 @@ def test_leader_hold_and_tap_generated() -> None:
 
     assert has_leader_hold
     assert has_leader_tap
+
+
+def test_leader_hold_chord_rule() -> None:
+    # leader_key+h -> left_arrow
+    rule = RuleIR(
+        trigger=Hotkey(steps=[Chord(keys=["f18", "h"])]),
+        action=Emit(chord=KeyChord(key="left_arrow")),
+    )
+    # include a sequence rule so f18 is recognized as leader
+    seq_rule = RuleIR(
+        trigger=Hotkey(steps=[Chord(keys=["f18"]), Chord(keys=["w"]), Chord(keys=["v"])]),
+        action=Emit(chord=KeyChord(key="1")),
+    )
+
+    backend = KarabinerBackend()
+    out = backend.compile([seq_rule, rule], description="test")
+
+    # Look for a manipulator that triggers on h with leader_hold==1
+    found = False
+    for manip in out.manipulators:
+        if manip.from_.key_code != "h":
+            continue
+        if not any(isinstance(c, VarCondition) and c.name == "leader_hold" and c.value == 1 for c in manip.conditions):
+            continue
+        if manip.to and any(e.key_code == "left_arrow" for e in manip.to):
+            found = True
+            break
+
+    assert found
