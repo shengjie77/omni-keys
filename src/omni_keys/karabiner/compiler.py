@@ -22,7 +22,7 @@ def compile_toml_config(in_path: str | Path, out_path: str | Path, *, indent: in
     backend = KarabinerBackend()
     rule = backend.compile(rules, description=description)
 
-    json_str = rule.model_dump_json(indent=indent, by_alias=True)
+    json_str = rule.model_dump_json(indent=indent, by_alias=True, exclude_none=True)
     out_path.write_text(json_str + "\n", encoding="utf-8")
 
 
