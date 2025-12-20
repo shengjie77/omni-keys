@@ -64,8 +64,8 @@ def test_backend_sequence_two_step() -> None:
 
     root = out.manipulators[0]
     assert root.from_.key_code == "f18"
-    assert root.to is not None
-    assert _has_set_variable(root.to, name="seq_f18_active", value=1)
+    assert root.to_if_alone is not None
+    assert _has_set_variable(root.to_if_alone, name="seq_f18_active", value=1)
 
     app_cond = _find_app_condition(root.conditions)
     assert app_cond is not None
@@ -97,8 +97,8 @@ def test_backend_sequence_three_step() -> None:
 
     root = out.manipulators[0]
     assert root.from_.key_code == "f18"
-    assert root.to is not None
-    assert _has_set_variable(root.to, name="seq_f18_active", value=1)
+    assert root.to_if_alone is not None
+    assert _has_set_variable(root.to_if_alone, name="seq_f18_active", value=1)
 
     mid = next(m for m in out.manipulators if m.from_.key_code == "w")
     assert mid.to is not None

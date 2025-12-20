@@ -38,11 +38,16 @@ class StateMachineStrategy:
 
         manipulators: list[Manipulator] = []
 
-        # Root step: enter active state + setup timeout cancel
+        # Leader behavior: hold for chord, tap to enter sequence + timeout cancel
         manipulators.append(
             Manipulator(
                 from_=_from_event(steps[0]),
-                to=[_set_var(root_var, 1)],
+                to=[_set_var("leader_hold", 1)],
+                to_after_key_up=[_set_var("leader_hold", 0)],
+                to_if_alone=[
+                    _set_var(root_var, 1),
+                    *[_set_var(v, 0) for v in all_vars if v != root_var],
+                ],
                 to_delayed_action=DelayedAction(
                     to_if_invoked=[_set_var(v, 0) for v in all_vars]
                 ),
