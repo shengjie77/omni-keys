@@ -23,9 +23,10 @@ class ShortcutFrontend:
 
         alias_key = cfg.alias.key
         alias_mod = cfg.alias.mod
-        global_apps = cfg.when.applications if cfg.when else None
 
         rules: List[RuleIR] = []
+
+        # Global rules (no implicit when)
         for rule in cfg.rule:
             parsed = parse_rule_mapping(
                 rule.trigger,
@@ -33,12 +34,19 @@ class ShortcutFrontend:
                 alias_key=alias_key,
                 alias_mod=alias_mod,
             )
-
-            rule_apps = rule.when.applications if rule.when else None
-            applications = rule_apps if rule_apps is not None else global_apps
-            if applications is not None:
-                parsed.when = When(applications=applications)
-
             rules.append(parsed)
+
+        # When groups: each group has its own applications
+        for group in cfg.when:
+            group_when = When(applications=list(group.applications))
+            for rule in group.rule:
+                parsed = parse_rule_mapping(
+                    rule.trigger,
+                    rule.emit,
+                    alias_key=alias_key,
+                    alias_mod=alias_mod,
+                )
+                parsed.when = group_when
+                rules.append(parsed)
 
         return rules

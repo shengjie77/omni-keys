@@ -67,13 +67,14 @@ def test_backend_sequence_two_step() -> None:
     assert root.to_if_alone is not None
     assert _has_set_variable(root.to_if_alone, name="seq_f18_active", value=1)
 
-    app_cond = _find_app_condition(root.conditions)
+    final = next(m for m in out.manipulators if m.from_.key_code == "w")
+    assert final.to is not None
+
+    # application condition should apply to sequence steps (not leader_hold)
+    app_cond = _find_app_condition(final.conditions)
     assert app_cond is not None
     assert app_cond.type == ConditionType.APPLICATION_IF
     assert app_cond.bundle_identifiers == ["com.example.app"]
-
-    final = next(m for m in out.manipulators if m.from_.key_code == "w")
-    assert final.to is not None
 
     var_cond = _find_var_condition(final.conditions, "seq_f18_active")
     assert var_cond is not None

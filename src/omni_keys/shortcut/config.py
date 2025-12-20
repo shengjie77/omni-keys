@@ -10,19 +10,19 @@ class AliasConfig(BaseModel):
     mod: Dict[str, str] = Field(default_factory=dict)
 
 
-class WhenConfig(BaseModel):
-    applications: List[str] | None = None
-
-
 class RuleConfig(BaseModel):
     trigger: str
     emit: str
-    when: WhenConfig | None = None
+
+
+class WhenGroupConfig(BaseModel):
+    applications: List[str]
+    rule: List[RuleConfig] = Field(default_factory=list)
 
 
 class Config(BaseModel):
     version: int | None = None
     description: str | None = None
-    when: WhenConfig | None = None
     alias: AliasConfig = Field(default_factory=AliasConfig)
     rule: List[RuleConfig] = Field(default_factory=list)
+    when: List[WhenGroupConfig] = Field(default_factory=list)

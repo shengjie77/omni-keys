@@ -16,22 +16,21 @@ def test_parse_config_basic() -> None:
     config = frontend.load_toml(path)
     rules = frontend.parse_config(config)
 
-    assert len(rules) == 1
-    rule = rules[0]
+    assert len(rules) == 2
 
-    # Trigger: leader_key>w>v -> f18>w>v
-    steps = rule.trigger.steps
-    assert [step.keys for step in steps] == [["f18"], ["w"], ["v"]]
-    assert all(len(step.modifiers) == 0 for step in steps)
+    # leader_key+h has no implicit when
+    chord_rule = next(r for r in rules if len(r.trigger.steps) == 1)
+    assert chord_rule.when is None
 
-    # Action: cmd+shift+opt+1 -> command+shift+option+1
-    assert isinstance(rule.action, Emit)
-    assert rule.action.chord.key == "1"
-    assert _norm_mods(rule.action.chord.modifiers) == {"command", "shift", "option"}
+    # leader_key>w>v uses when group and should inherit applications
+    seq_rule = next(r for r in rules if len(r.trigger.steps) == 3)
 
-    # Global when should be applied to rule
-    assert rule.when is not None
-    assert getattr(rule.when, "applications", None) == [
+    assert isinstance(seq_rule.action, Emit)
+    assert seq_rule.action.chord.key == "1"
+    assert _norm_mods(seq_rule.action.chord.modifiers) == {"command", "shift", "option"}
+
+    assert seq_rule.when is not None
+    assert getattr(seq_rule.when, "applications", None) == [
         "^com\\.jetbrains\\.",
         "^com\\.google\\.android\\.studio$",
     ]

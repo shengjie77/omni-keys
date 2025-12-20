@@ -1,11 +1,5 @@
 description = 'Test Shortcut'
 
-[when]
-applications = [
-  "^com\\.jetbrains\\.",
-  "^com\\.google\\.android\\.studio$",
-]
-
 [alias.key]
 leader_key = "f18"
 
@@ -15,7 +9,16 @@ ctrl = "control"
 opt  = "option"
 alt  = "option"
 
-
 [[rule]]
-trigger = "leader_key>w>v"
-emit    = "cmd+shift+opt+1"
+trigger = "leader_key+h"
+emit    = "cmd+shift+opt+2"
+
+[[when]]
+applications = [
+  "^com\\.jetbrains\\.",
+  "^com\\.google\\.android\\.studio$",
+]
+
+  [[when.rule]]
+  trigger = "leader_key>w>v"
+  emit    = "cmd+shift+opt+1"

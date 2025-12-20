@@ -37,6 +37,8 @@ class KarabinerBackend:
                     bundle_identifiers=list(rule.when.applications),
                 )
                 for manip in rule_manips:
+                    if _is_leader_hold_manip(manip):
+                        continue
                     manip.conditions.append(app_cond)
 
             manipulators.extend(rule_manips)
@@ -113,3 +115,24 @@ def _collect_leader_keys(rules: List[RuleIR]) -> Set[str]:
             continue
         leaders.add(step0.keys[0])
     return leaders
+
+
+def _is_leader_hold_manip(manip: Manipulator) -> bool:
+    if not manip.to_after_key_up:
+        return False
+    if not manip.to:
+        return False
+    if not manip.to_if_alone:
+        return False
+
+    def _has_set_var(events, name: str, value: int) -> bool:
+        return any(
+            e.set_variable
+            and e.set_variable.name == name
+            and e.set_variable.value == value
+            for e in events
+        )
+
+    return _has_set_var(manip.to, "leader_hold", 1) and _has_set_var(
+        manip.to_after_key_up, "leader_hold", 0
+    )
