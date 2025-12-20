@@ -124,7 +124,7 @@ emit    = "cmd+shift+opt+1"
   - 语义 modifier：`command/control/option/shift/fn/caps_lock`
   - 方向 modifier：`left_command/right_command/...`
 - `Chord`（触发一步）：
-  - `keys: List[KeyCode]`（>= 1；`>1` 表示 simultaneous keys）
+  - `keys: List[KeyCode]`（>= 1）
   - `modifiers: Set[Modifier] = ∅`
 - `Hotkey`（触发器）：
   - `steps: List[Chord]`（>= 1；`>1` 表示 sequence）
@@ -136,7 +136,7 @@ emit    = "cmd+shift+opt+1"
 - `Rule`：
   - `trigger: Hotkey`
   - `action: Action`
-  - `when: Context/Conditions = []`（可选：应用匹配、模式开关等“用户可见语义”）
+  - `when: Context/Conditions = []`（可选：应用匹配等“用户可见语义”）
 
 ### IR 示例
 
@@ -145,10 +145,10 @@ emit    = "cmd+shift+opt+1"
 - `Hotkey(steps=[Chord(keys=[f18]), Chord(keys=[w]), Chord(keys=[v])])`
 - `Action=Emit(KeyChord(key="1", modifiers={command,shift,option}))`
 
-触发：`d+f`，动作：`left_command+left_control+l`
+触发：`leader_key+h`，动作：`left_arrow`
 
-- `Hotkey(steps=[Chord(keys=[d,f])])`
-- `Action=Emit(KeyChord(key="l", modifiers={left_command,left_control}))`
+- `Hotkey(steps=[Chord(keys=[f18,h])])`
+- `Action=Emit(KeyChord(key="left_arrow", modifiers=∅))`
 
 ---
 
@@ -167,9 +167,9 @@ emit    = "cmd+shift+opt+1"
 - 如果 `Chord.keys` 长度为 1：
   - `from.key_code = keys[0]`
   - `from.modifiers = { mandatory: chord.modifiers, optional: ["any"] }`（后端默认；不进入配置文件）
-- 如果 `Chord.keys` 长度 > 1：
-  - `from.simultaneous = keys`
-  - `from.modifiers` 同上
+- 如果 `Chord.keys` 长度为 2 且其中一个是 leader：
+  - 作为 **leader hold chord** 处理（条件 `leader_hold==1`，`from.key_code=另一键`）
+- 其他多键 chord：当前不支持
 - 动作：
   - `to = [{ "key_code": action.key, "modifiers": [...] }]`
 
@@ -179,10 +179,18 @@ emit    = "cmd+shift+opt+1"
 
 核心思想：
 
-- 为每个 sequence 维护“当前前缀状态”的 variable（状态机）
-- 第一步进入 `seq_<root>_active = 1`
-- 中间步骤在 `variable_if` 条件下推进到下一个前缀状态
-- 最后一步清理状态并 emit 最终 key chord
+- 第一键作为 leader：
+  - **按住**：`leader_hold=1`（用于 leader+h 这种 chord）
+  - **轻点**：`to_if_alone` 进入 `seq_<root>_active=1`
+- 中间步骤推进 prefix 状态
+- 最后一步清理状态并 emit
+- 按错键：清理所有 root 相关状态
+- 超时：清理所有 root 相关状态
+
+超时默认值：
+
+- `basic.to_delayed_action_delay_milliseconds = 1000`
+- 当超时触发时，使用 `to_delayed_action.to_if_invoked` 清理状态
 
 关键点：
 
@@ -193,5 +201,5 @@ emit    = "cmd+shift+opt+1"
 
 ## 与现有配置的关系
 
-当前 `keyboard.json` 使用 `f18>w>v` 这类 DSL，属于本设计中的 sequence 触发器。
-后端应生成与 `origin.json/final.json` 类似的 Karabiner manipulators（内部使用 variable 状态机实现）。
+当前 `shortcut.toml` / `shortcut.json` 使用 `leader_key>w>v` 这类 DSL，属于本设计中的 sequence 触发器。
+后端应生成与 `shortcut.json` 类似的 Karabiner manipulators（内部使用 variable 状态机实现）。
