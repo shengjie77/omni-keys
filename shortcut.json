@@ -260,62 +260,6 @@
       "conditions": [
         {
           "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.jetbrains\\.",
-            "^com\\.google\\.android\\.studio$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18:w"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.jetbrains\\.",
-            "^com\\.google\\.android\\.studio$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
           "name": "omni.hold",
           "value": 1
         },
@@ -508,60 +452,6 @@
     },
     {
       "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18:f"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
       "conditions": [],
       "from": {
         "key_code": "f18"
@@ -717,60 +607,6 @@
             "option",
             "shift"
           ]
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "omni.seq",
-          "value": "seq:f18:f"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
-        }
-      ],
-      "from": {
-        "any": "key_code"
-      },
-      "to": [
-        {
-          "set_variable": {
-            "name": "omni.seq",
-            "value": "idle"
-          }
         }
       ]
     },
@@ -941,12 +777,27 @@
           "type": "variable_if",
           "name": "omni.seq",
           "value": "seq:f18"
-        },
+        }
+      ],
+      "from": {
+        "any": "key_code"
+      },
+      "to": [
         {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "idle"
+          }
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18:f"
         }
       ],
       "from": {
@@ -968,12 +819,6 @@
           "type": "variable_if",
           "name": "omni.seq",
           "value": "seq:f18:w"
-        },
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.google\\.Chrome$"
-          ]
         }
       ],
       "from": {

@@ -6,7 +6,7 @@ from typing import List, Protocol
 from omni_keys.shortcut.ir import Emit, RuleIR
 
 from .models.condition import ConditionType, VarCondition
-from .models.from_event import AnyKey, FromEvent
+from .models.from_event import FromEvent
 from .models.manipulator import DelayedAction, Manipulator
 from .models.modifier import Modifier
 from .models.modifiers import FromModifiers
@@ -147,22 +147,6 @@ class StateMachineStrategy:
                             else None,
                         ),
                     ],
-                )
-            )
-
-        # Cancel on wrong key for each active prefix
-        for i in range(0, len(steps) - 1):
-            manipulators.append(
-                Manipulator(
-                    conditions=[
-                        VarCondition(
-                            type=ConditionType.VARIABLE_IF,
-                            name=self._seq_var,
-                            value=_seq_state(step_ids, i),
-                        ),
-                    ],
-                    from_=FromEvent(any=AnyKey.KEY_CODE),
-                    to=[_set_var(self._seq_var, self._seq_idle)],
                 )
             )
 

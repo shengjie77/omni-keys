@@ -5,12 +5,12 @@ from typing import List, Set
 from omni_keys.shortcut.ir import Emit, RuleIR
 
 from .models.condition import AppCondition, ConditionType, VarCondition
-from .models.from_event import FromEvent
+from .models.from_event import AnyKey, FromEvent
 from .models.manipulator import Manipulator
 from .models.modifier import Modifier
 from .models.modifiers import FromModifiers
 from .models.rule import Rule
-from .models.to_event import ToEvent
+from .models.to_event import ToEvent, Variable
 from .sequence_strategy import StateMachineStrategy
 
 
@@ -43,6 +43,7 @@ class KarabinerBackend:
 
             manipulators.extend(rule_manips)
 
+        _append_sequence_cancels(manipulators)
         return Rule(description=description, manipulators=manipulators)
 
     @staticmethod
@@ -136,3 +137,33 @@ def _is_leader_hold_manip(manip: Manipulator) -> bool:
     return _has_set_var(manip.to, "omni.hold", 1) and _has_set_var(
         manip.to_after_key_up, "omni.hold", 0
     )
+
+
+def _append_sequence_cancels(manipulators: List[Manipulator]) -> None:
+    seq_states: Set[str] = set()
+    for manip in manipulators:
+        for cond in manip.conditions:
+            if not isinstance(cond, VarCondition):
+                continue
+            if cond.name != "omni.seq":
+                continue
+            if isinstance(cond.value, str) and cond.value.startswith("seq:"):
+                seq_states.add(cond.value)
+
+    if not seq_states:
+        return
+
+    for state in sorted(seq_states):
+        manipulators.append(
+            Manipulator(
+                conditions=[
+                    VarCondition(
+                        type=ConditionType.VARIABLE_IF,
+                        name="omni.seq",
+                        value=state,
+                    )
+                ],
+                from_=FromEvent(any=AnyKey.KEY_CODE),
+                to=[ToEvent(set_variable=Variable(name="omni.seq", value="idle"))],
+            )
+        )
