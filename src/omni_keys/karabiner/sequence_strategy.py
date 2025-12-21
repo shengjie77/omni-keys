@@ -24,6 +24,9 @@ class StateMachineStrategy:
 
     def __init__(self, *, timeout_ms: int = 1000) -> None:
         self._timeout_ms = timeout_ms
+        self._hold_var = "omni.hold"
+        self._seq_var = "omni.seq"
+        self._seq_idle = "idle"
 
     def lower(self, rule: RuleIR, *, namespace: str) -> List[Manipulator]:
         steps = rule.trigger.steps
@@ -33,8 +36,7 @@ class StateMachineStrategy:
             raise ValueError("sequence strategy only supports Emit action")
 
         step_ids = [_step_id(step) for step in steps]
-        root_var = _prefix_var(step_ids, 1)
-        all_vars = _all_vars(step_ids)
+        root_state = _seq_state(step_ids, 0)
 
         manipulators: list[Manipulator] = []
 
@@ -42,14 +44,13 @@ class StateMachineStrategy:
         manipulators.append(
             Manipulator(
                 from_=_from_event(steps[0]),
-                to=[_set_var("leader_hold", 1)],
-                to_after_key_up=[_set_var("leader_hold", 0)],
+                to=[_set_var(self._hold_var, 1)],
+                to_after_key_up=[_set_var(self._hold_var, 0)],
                 to_if_alone=[
-                    _set_var(root_var, 1),
-                    *[_set_var(v, 0) for v in all_vars if v != root_var],
+                    _set_var(self._seq_var, root_state),
                 ],
                 to_delayed_action=DelayedAction(
-                    to_if_invoked=[_set_var(v, 0) for v in all_vars]
+                    to_if_invoked=[_set_var(self._seq_var, self._seq_idle)]
                 ),
                 parameters={
                     "basic.to_delayed_action_delay_milliseconds": self._timeout_ms
@@ -59,18 +60,22 @@ class StateMachineStrategy:
 
         # Intermediate transitions
         for i in range(1, len(steps) - 1):
-            from_var = _prefix_var(step_ids, i)
-            to_var = _prefix_var(step_ids, i + 1)
+            from_state = _seq_state(step_ids, i - 1)
+            to_state = _seq_state(step_ids, i)
 
             manipulators.append(
                 Manipulator(
                     conditions=[
-                        VarCondition(type=ConditionType.VARIABLE_IF, name=from_var, value=1),
+                        VarCondition(
+                            type=ConditionType.VARIABLE_IF,
+                            name=self._seq_var,
+                            value=from_state,
+                        ),
                     ],
                     from_=_from_event(steps[i]),
-                    to=[_set_var(from_var, 0), _set_var(to_var, 1)],
+                    to=[_set_var(self._seq_var, to_state)],
                     to_delayed_action=DelayedAction(
-                        to_if_invoked=[_set_var(v, 0) for v in all_vars]
+                        to_if_invoked=[_set_var(self._seq_var, self._seq_idle)]
                     ),
                     parameters={
                         "basic.to_delayed_action_delay_milliseconds": self._timeout_ms
@@ -78,16 +83,40 @@ class StateMachineStrategy:
                 )
             )
 
+            if i == 1:
+                manipulators.append(
+                    Manipulator(
+                        conditions=[
+                            VarCondition(
+                                type=ConditionType.VARIABLE_IF,
+                                name=self._hold_var,
+                                value=1,
+                            ),
+                        ],
+                        from_=_from_event(steps[i]),
+                        to=[_set_var(self._seq_var, to_state)],
+                        to_delayed_action=DelayedAction(
+                            to_if_invoked=[_set_var(self._seq_var, self._seq_idle)]
+                        ),
+                        parameters={
+                            "basic.to_delayed_action_delay_milliseconds": self._timeout_ms
+                        },
+                    )
+                )
+
         # Final step: clear state + emit action
-        last_var = _prefix_var(step_ids, len(steps) - 1)
         manipulators.append(
             Manipulator(
                 conditions=[
-                    VarCondition(type=ConditionType.VARIABLE_IF, name=last_var, value=1),
+                    VarCondition(
+                        type=ConditionType.VARIABLE_IF,
+                        name=self._seq_var,
+                        value=_seq_state(step_ids, len(steps) - 2),
+                    ),
                 ],
                 from_=_from_event(steps[-1]),
                 to=[
-                    _set_var(last_var, 0),
+                    _set_var(self._seq_var, self._seq_idle),
                     ToEvent(
                         key_code=rule.action.chord.key,
                         modifiers=_map_modifiers(rule.action.chord.modifiers)
@@ -98,22 +127,49 @@ class StateMachineStrategy:
             )
         )
 
-        # Cancel on wrong key for each active prefix
-        for prefix_var in all_vars:
+        if len(steps) == 2:
             manipulators.append(
                 Manipulator(
                     conditions=[
-                        VarCondition(type=ConditionType.VARIABLE_IF, name=prefix_var, value=1),
+                        VarCondition(
+                            type=ConditionType.VARIABLE_IF,
+                            name=self._hold_var,
+                            value=1,
+                        ),
+                    ],
+                    from_=_from_event(steps[-1]),
+                    to=[
+                        _set_var(self._seq_var, self._seq_idle),
+                        ToEvent(
+                            key_code=rule.action.chord.key,
+                            modifiers=_map_modifiers(rule.action.chord.modifiers)
+                            if rule.action.chord.modifiers
+                            else None,
+                        ),
+                    ],
+                )
+            )
+
+        # Cancel on wrong key for each active prefix
+        for i in range(0, len(steps) - 1):
+            manipulators.append(
+                Manipulator(
+                    conditions=[
+                        VarCondition(
+                            type=ConditionType.VARIABLE_IF,
+                            name=self._seq_var,
+                            value=_seq_state(step_ids, i),
+                        ),
                     ],
                     from_=FromEvent(any=AnyKey.KEY_CODE),
-                    to=[_set_var(v, 0) for v in all_vars],
+                    to=[_set_var(self._seq_var, self._seq_idle)],
                 )
             )
 
         return manipulators
 
 
-def _set_var(name: str, value: int) -> ToEvent:
+def _set_var(name: str, value: str | int) -> ToEvent:
     return ToEvent(set_variable=Variable(name=name, value=value))
 
 
@@ -135,16 +191,12 @@ def _step_id(step) -> str:
     return _sanitize("_".join(parts))
 
 
-def _prefix_var(step_ids: list[str], length: int) -> str:
+def _seq_state(step_ids: list[str], prefix_len: int) -> str:
     root = step_ids[0]
-    if length <= 1:
-        return f"seq_{root}_active"
-    suffix = "_".join(step_ids[1:length])
-    return f"seq_{root}_{suffix}"
-
-
-def _all_vars(step_ids: list[str]) -> list[str]:
-    return [_prefix_var(step_ids, i) for i in range(1, len(step_ids))]
+    if prefix_len <= 0:
+        return f"seq:{root}"
+    suffix = ":".join(step_ids[1 : prefix_len + 1])
+    return f"seq:{root}:{suffix}"
 
 
 def _sanitize(value: str) -> str:

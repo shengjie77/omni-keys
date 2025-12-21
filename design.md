@@ -173,29 +173,66 @@ emit    = "cmd+shift+opt+1"
 - 动作：
   - `to = [{ "key_code": action.key, "modifiers": [...] }]`
 
-### Lowering：Sequence（默认策略：变量状态机）
+### Lowering：Sequence（单 leader + hold/seq 双变量）
 
 默认策略由后端提供（前端不需要表达超时/取消等语义）。
 
-核心思想：
+核心思想：使用两个变量，职责清晰、冲突少。
 
-- 第一键作为 leader：
-  - **按住**：`leader_hold=1`（用于 leader+h 这种 chord）
-  - **轻点**：`to_if_alone` 进入 `seq_<root>_active=1`
-- 中间步骤推进 prefix 状态
-- 最后一步清理状态并 emit
-- 按错键：清理所有 root 相关状态
-- 超时：清理所有 root 相关状态
+- `omni.hold`（int）：leader 物理按住标记（1/0）
+- `omni.seq`（string）：序列状态（`seq:<leader>` / `seq:<leader>:<prefix...>` / `idle`）
+
+#### Leader 行为（持按与轻点）
+
+> 目标：按住 leader 可连续触发，轻点 leader 进入序列模式；并允许“按得很快”时序列不中断。
+
+规则：
+
+- leader **按下**：`omni.hold = 1`
+- leader **抬起**：`omni.hold = 0`
+- leader **轻点**：`to_if_alone` 设置 `omni.seq = seq:<leader>`
+
+#### hold 下的 chord（连续触发）
+
+当 `omni.hold == 1` 时，按任意配置的键触发动作，但 **不改变状态**，以支持连续按键：
+
+- 条件：`variable_if omni.hold == 1`
+- 动作：`to` 发出目标按键（不写入状态）
+
+#### 序列推进与最终触发
+
+以 `leader>f>t` 为例：
+
+- `omni.seq == seq:<leader>` + `f` → `omni.seq = seq:<leader>:f`
+- `omni.seq == seq:<leader>:f` + `t` → 触发动作 + `omni.seq = idle`
+
+为避免“leader 尚未抬起就按下一键”导致序列丢失，可允许从 hold 直接进入序列：
+
+- `omni.hold == 1` + `f` → `omni.seq = seq:<leader>:f`
+
+#### 分叉序列
+
+例如 `leader>w>v` 与 `leader>w>s`：
+
+- `seq:<leader>` + `w` → `seq:<leader>:w`
+- `seq:<leader>:w` + `v` → emit + `idle`
+- `seq:<leader>:w` + `s` → emit + `idle`
+
+#### 取消与超时
+
+- **按错键**：当 `omni.seq` 为 `seq:*` 时，任意非期望键 → `omni.seq = idle`
+- **超时**：进入 `seq:*` 后加 `to_delayed_action`，超时统一回 `idle`
 
 超时默认值：
 
 - `basic.to_delayed_action_delay_milliseconds = 1000`
-- 当超时触发时，使用 `to_delayed_action.to_if_invoked` 清理状态
+- 触发时使用 `to_delayed_action.to_if_invoked` 写入 `idle`
 
 关键点：
 
-- 支持分叉：共享前缀（例如 `f18>w>v` 与 `f18>w>s`）
-- 变量命名、reset、冲突规避均由后端负责（实现细节）
+- 只用一个 leader key，逻辑仍清晰
+- `hold` 与 `seq` 解耦，降低冲突与误触
+- 允许 hold 直接推进序列，避免“按得太快”失效
 
 ---
 

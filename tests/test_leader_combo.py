@@ -24,18 +24,18 @@ def test_leader_hold_and_tap_generated() -> None:
             continue
         if manip.to_after_key_up is None or manip.to_if_alone is None:
             continue
-        # leader_hold set/unset
+        # omni.hold set/unset
         if any(
-            e.set_variable and e.set_variable.name == "leader_hold" and e.set_variable.value == 1
+            e.set_variable and e.set_variable.name == "omni.hold" and e.set_variable.value == 1
             for e in (manip.to or [])
         ) and any(
-            e.set_variable and e.set_variable.name == "leader_hold" and e.set_variable.value == 0
+            e.set_variable and e.set_variable.name == "omni.hold" and e.set_variable.value == 0
             for e in manip.to_after_key_up
         ):
             has_leader_hold = True
         # tap enters sequence mode
         if any(
-            e.set_variable and e.set_variable.name == "seq_f18_active" and e.set_variable.value == 1
+            e.set_variable and e.set_variable.name == "omni.seq" and e.set_variable.value == "seq:f18"
             for e in manip.to_if_alone
         ):
             has_leader_tap = True
@@ -59,12 +59,15 @@ def test_leader_hold_chord_rule() -> None:
     backend = KarabinerBackend()
     out = backend.compile([seq_rule, rule], description="test")
 
-    # Look for a manipulator that triggers on h with leader_hold==1
+    # Look for a manipulator that triggers on h with omni.hold==1
     found = False
     for manip in out.manipulators:
         if manip.from_.key_code != "h":
             continue
-        if not any(isinstance(c, VarCondition) and c.name == "leader_hold" and c.value == 1 for c in manip.conditions):
+        if not any(
+            isinstance(c, VarCondition) and c.name == "omni.hold" and c.value == 1
+            for c in manip.conditions
+        ):
             continue
         if manip.to and any(e.key_code == "left_arrow" for e in manip.to):
             found = True

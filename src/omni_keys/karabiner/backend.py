@@ -81,7 +81,7 @@ class KarabinerBackend:
                 conditions=[
                     VarCondition(
                         type=ConditionType.VARIABLE_IF,
-                        name="leader_hold",
+                        name="omni.hold",
                         value=1,
                     )
                 ],
@@ -133,6 +133,6 @@ def _is_leader_hold_manip(manip: Manipulator) -> bool:
             for e in events
         )
 
-    return _has_set_var(manip.to, "leader_hold", 1) and _has_set_var(
-        manip.to_after_key_up, "leader_hold", 0
+    return _has_set_var(manip.to, "omni.hold", 1) and _has_set_var(
+        manip.to_after_key_up, "omni.hold", 0
     )

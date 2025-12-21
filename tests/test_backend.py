@@ -22,7 +22,7 @@ def _find_var_condition(conditions: Iterable[object], name: str) -> VarCondition
     return None
 
 
-def _has_set_variable(events, *, name: str, value: int) -> bool:
+def _has_set_variable(events, *, name: str, value: int | str) -> bool:
     for event in events:
         if event.set_variable is None:
             continue
@@ -65,22 +65,22 @@ def test_backend_sequence_two_step() -> None:
     root = out.manipulators[0]
     assert root.from_.key_code == "f18"
     assert root.to_if_alone is not None
-    assert _has_set_variable(root.to_if_alone, name="seq_f18_active", value=1)
+    assert _has_set_variable(root.to_if_alone, name="omni.seq", value="seq:f18")
 
     final = next(m for m in out.manipulators if m.from_.key_code == "w")
     assert final.to is not None
 
-    # application condition should apply to sequence steps (not leader_hold)
+    # application condition should apply to sequence steps (not omni.hold)
     app_cond = _find_app_condition(final.conditions)
     assert app_cond is not None
     assert app_cond.type == ConditionType.APPLICATION_IF
     assert app_cond.bundle_identifiers == ["com.example.app"]
 
-    var_cond = _find_var_condition(final.conditions, "seq_f18_active")
+    var_cond = _find_var_condition(final.conditions, "omni.seq")
     assert var_cond is not None
-    assert var_cond.value == 1
+    assert var_cond.value == "seq:f18"
 
-    assert _has_set_variable(final.to, name="seq_f18_active", value=0)
+    assert _has_set_variable(final.to, name="omni.seq", value="idle")
     assert _has_key_code(final.to, "1")
 
 
@@ -99,19 +99,19 @@ def test_backend_sequence_three_step() -> None:
     root = out.manipulators[0]
     assert root.from_.key_code == "f18"
     assert root.to_if_alone is not None
-    assert _has_set_variable(root.to_if_alone, name="seq_f18_active", value=1)
+    assert _has_set_variable(root.to_if_alone, name="omni.seq", value="seq:f18")
 
     mid = next(m for m in out.manipulators if m.from_.key_code == "w")
     assert mid.to is not None
-    assert _has_set_variable(mid.to, name="seq_f18_active", value=0)
-    assert _has_set_variable(mid.to, name="seq_f18_w", value=1)
+    assert _has_set_variable(mid.to, name="omni.seq", value="seq:f18:w")
 
-    var_cond = _find_var_condition(mid.conditions, "seq_f18_active")
+    var_cond = _find_var_condition(mid.conditions, "omni.seq")
     assert var_cond is not None
+    assert var_cond.value == "seq:f18"
 
     final = next(m for m in out.manipulators if m.from_.key_code == "v")
     assert final.to is not None
-    assert _has_set_variable(final.to, name="seq_f18_w", value=0)
+    assert _has_set_variable(final.to, name="omni.seq", value="idle")
     assert _has_key_code(final.to, "2")
 
 
@@ -159,16 +159,16 @@ def test_backend_sequence_cancel_on_wrong_key() -> None:
         if manip.to is None:
             continue
 
-        if _find_var_condition(manip.conditions, "seq_f18_active"):
-            if _has_set_variable(manip.to, name="seq_f18_active", value=0) and _has_set_variable(
-                manip.to, name="seq_f18_w", value=0
-            ):
+        if _find_var_condition(manip.conditions, "omni.seq") and any(
+            c.value == "seq:f18" for c in manip.conditions if isinstance(c, VarCondition)
+        ):
+            if _has_set_variable(manip.to, name="omni.seq", value="idle"):
                 has_root_cancel = True
 
-        if _find_var_condition(manip.conditions, "seq_f18_w"):
-            if _has_set_variable(manip.to, name="seq_f18_active", value=0) and _has_set_variable(
-                manip.to, name="seq_f18_w", value=0
-            ):
+        if _find_var_condition(manip.conditions, "omni.seq") and any(
+            c.value == "seq:f18:w" for c in manip.conditions if isinstance(c, VarCondition)
+        ):
+            if _has_set_variable(manip.to, name="omni.seq", value="idle"):
                 has_mid_cancel = True
 
     assert has_root_cancel
@@ -196,9 +196,7 @@ def test_backend_sequence_timeout_clears_state() -> None:
         invoked = getattr(delayed, "to_if_invoked", None)
         if invoked is None:
             continue
-        if _has_set_variable(invoked, name="seq_f18_active", value=0) and _has_set_variable(
-            invoked, name="seq_f18_w", value=0
-        ):
+        if _has_set_variable(invoked, name="omni.seq", value="idle"):
             has_timeout_clear = True
 
     assert has_timeout_clear
