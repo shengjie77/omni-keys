@@ -71,7 +71,7 @@ class KarabinerBackend:
             if leader is None:
                 raise ValueError("multi-key chord requires a leader key from a sequence")
             other = next(k for k in step.keys if k != leader)
-            from_event = FromEvent(key_code=other, modifiers=FromModifiers(optional=[Modifier.ANY]))
+            from_event = FromEvent(key_code=other, modifiers=FromModifiers(optional=[Modifier.ANY], mandatory=[]))
             to_event = ToEvent(
                 key_code=rule.action.chord.key,
                 modifiers=_map_modifiers(rule.action.chord.modifiers)
