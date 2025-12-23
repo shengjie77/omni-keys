@@ -1,0 +1,104 @@
+description = 'SJ Shortcut'
+
+
+[alias.key]
+leader_key = "f18"
+
+[alias.mod]
+cmd  = "command"
+ctrl = "control"
+opt  = "option"
+alt  = "option"
+
+[[rule]]
+trigger = "leader_key+h"
+emit = "left_arrow"
+
+[[rule]]
+trigger = "leader_key+j"
+emit = "down_arrow"
+
+[[rule]]
+trigger = "leader_key+k"
+emit = "up_arrow"
+
+[[rule]]
+trigger = "leader_key+l"
+emit = "right_arrow"
+
+####################### Jetbrain IDE #######################
+[[when]]
+applications = [
+  "^com\\.jetbrains\\.",
+  "^com\\.google\\.android\\.studio$",
+  "com.huawei.devecostudio.ds",
+]
+
+[[when.rule]]
+trigger = "leader_key>w>v"
+emit    = "cmd+shift+opt+1"
+
+[[when.rule]]
+trigger = "leader_key>w>s"
+emit    = "cmd+shift+opt+2"
+
+[[when.rule]]
+trigger = "leader_key>w>d"
+emit    = "cmd+shift+opt+3"
+
+[[when.rule]]
+trigger = "leader_key+tab"
+emit    = "cmd+shift+opt+close_bracket"
+
+[[when.rule]]
+trigger = "leader_key>l>r"
+emit    = "shift+f6"
+
+[[when.rule]]
+trigger = "leader_key>l>l"
+emit    = "alt+f7"
+####################### Jetbrain IDE #######################
+
+
+####################### Chrome #######################
+[[when]]
+applications = [
+  "^com\\.google\\.Chrome$",
+]
+
+[[when.rule]]
+trigger = "leader_key+tab"
+emit    = "cmd+shift+opt+ctrl+tab"
+
+[[when.rule]]
+trigger = "leader_key>f>t"
+emit    = "cmd+shift+opt+ctrl+t"
+
+[[when.rule]]
+trigger = "leader_key>f>b"
+emit    = "cmd+shift+opt+ctrl+e"
+
+[[when.rule]]
+trigger = "leader_key>w>n"
+emit    = "cmd+shift+opt+ctrl+w"
+####################### Chrome #######################
+
+
+####################### Kitty #######################
+[[when]]
+applications = [
+  "net.kovidgoyal.kitty"
+]
+
+[[when.rule]]
+trigger = "leader_key>w>v"
+emit    = "ctrl+shift+1"
+
+[[when.rule]]
+trigger = "leader_key>w>s"
+emit    = "ctrl+shift+2"
+
+[[when.rule]]
+trigger = "leader_key>w>d"
+emit    = "ctrl+shift+3"
+####################### Kitty #######################
