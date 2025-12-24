@@ -3,6 +3,7 @@ from __future__ import annotations
 from omni_keys.karabiner.backend import KarabinerBackend
 from omni_keys.shortcut.ir import Chord, Emit, Hotkey, KeyChord, RuleIR, When
 from omni_keys.karabiner.models.condition import VarCondition
+from omni_keys.karabiner.models.modifier import Modifier
 
 
 def test_leader_hold_and_tap_generated() -> None:
@@ -19,6 +20,7 @@ def test_leader_hold_and_tap_generated() -> None:
     # Expect leader hold and tap behavior to be present in manipulators
     has_leader_hold = False
     has_leader_tap = False
+    has_leader_mods = False
     for manip in out.manipulators:
         if manip.from_.key_code != "f18":
             continue
@@ -39,9 +41,16 @@ def test_leader_hold_and_tap_generated() -> None:
             for e in manip.to_if_alone
         ):
             has_leader_tap = True
+        if manip.from_.modifiers is None:
+            continue
+        if (manip.from_.modifiers.mandatory or []) == [] and (
+            manip.from_.modifiers.optional or []
+        ) == [Modifier.ANY]:
+            has_leader_mods = True
 
     assert has_leader_hold
     assert has_leader_tap
+    assert has_leader_mods
 
 
 def test_leader_hold_chord_rule() -> None:

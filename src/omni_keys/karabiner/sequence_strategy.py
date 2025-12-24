@@ -43,7 +43,7 @@ class StateMachineStrategy:
         # Leader behavior: hold for chord, tap to enter sequence + timeout cancel
         manipulators.append(
             Manipulator(
-                from_=_from_event(steps[0]),
+                from_=_leader_from_event(steps[0]),
                 to=[_set_var(self._hold_var, 1)],
                 to_after_key_up=[_set_var(self._hold_var, 0)],
                 to_if_alone=[
@@ -165,6 +165,16 @@ def _from_event(step) -> FromEvent:
             optional=[Modifier.ANY],
         )
 
+    if len(step.keys) == 1:
+        return FromEvent(key_code=step.keys[0], modifiers=from_mods)
+    return FromEvent(simultaneous=list(step.keys), modifiers=from_mods)
+
+
+def _leader_from_event(step) -> FromEvent:
+    if step.modifiers:
+        return _from_event(step)
+
+    from_mods = FromModifiers(mandatory=[], optional=[Modifier.ANY])
     if len(step.keys) == 1:
         return FromEvent(key_code=step.keys[0], modifiers=from_mods)
     return FromEvent(simultaneous=list(step.keys), modifiers=from_mods)

@@ -101,7 +101,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -266,7 +272,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -431,7 +443,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -633,7 +651,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -796,7 +820,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -959,7 +989,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1123,7 +1159,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1288,7 +1330,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1452,7 +1500,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1651,7 +1705,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1811,7 +1871,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -1971,7 +2037,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -2131,7 +2203,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -2289,7 +2367,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
@@ -2447,7 +2531,13 @@
       "type": "basic",
       "conditions": [],
       "from": {
-        "key_code": "f18"
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
       },
       "to": [
         {
