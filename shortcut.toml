@@ -1,6 +1,5 @@
 description = 'SJ Shortcut'
 
-
 [alias.key]
 leader_key = "f18"
 
@@ -12,26 +11,26 @@ alt  = "option"
 
 [[rule]]
 trigger = "leader_key+h"
-emit = "left_arrow"
+emit    = "left_arrow"
 
 [[rule]]
 trigger = "leader_key+j"
-emit = "down_arrow"
+emit    = "down_arrow"
 
 [[rule]]
 trigger = "leader_key+k"
-emit = "up_arrow"
+emit    = "up_arrow"
 
 [[rule]]
 trigger = "leader_key+l"
-emit = "right_arrow"
+emit    = "right_arrow"
 
 ####################### Jetbrain IDE #######################
 [[when]]
 applications = [
-  "^com\\.jetbrains\\.",
-  "^com\\.google\\.android\\.studio$",
-  "com.huawei.devecostudio.ds",
+    "^com\\.jetbrains\\.",
+    "^com\\.google\\.android\\.studio$",
+    "com.huawei.devecostudio.ds",
 ]
 
 [[when.rule]]
@@ -57,14 +56,27 @@ emit    = "shift+f6"
 [[when.rule]]
 trigger = "leader_key>l>l"
 emit    = "alt+f7"
-####################### Jetbrain IDE #######################
 
+[[when.rule]]
+trigger = "leader_key>f>f"
+emit    = "command+shift+o"
+
+[[when.rule]]
+trigger = "leader_key>f>t"
+emit    = "command+shift+option+e"
+
+[[when.rule]]
+trigger = "leader_key>f>s"
+emit    = "command+option+o"
+
+[[when.rule]]
+trigger = "leader_key>f>r"
+emit    = "command+e"
+####################### Jetbrain IDE #######################
 
 ####################### Chrome #######################
 [[when]]
-applications = [
-  "^com\\.google\\.Chrome$",
-]
+applications = ["^com\\.google\\.Chrome$"]
 
 [[when.rule]]
 trigger = "leader_key+tab"
@@ -83,12 +95,9 @@ trigger = "leader_key>w>n"
 emit    = "cmd+shift+opt+ctrl+w"
 ####################### Chrome #######################
 
-
 ####################### Kitty #######################
 [[when]]
-applications = [
-  "net.kovidgoyal.kitty"
-]
+applications = ["net.kovidgoyal.kitty"]
 
 [[when.rule]]
 trigger = "leader_key>w>v"
