@@ -72,6 +72,18 @@ emit    = "command+option+o"
 [[when.rule]]
 trigger = "leader_key>f>r"
 emit    = "command+e"
+
+[[when.rule]]
+trigger = "leader_key>p>b"
+emit    = "cmd+shift+opt+4"
+
+[[when.rule]]
+trigger = "leader_key>p>o"
+emit    = "cmd+opt+5"
+
+[[when.rule]]
+trigger = "leader_key>p>f"
+emit    = "cmd+1"
 ####################### Jetbrain IDE #######################
 
 ####################### Chrome #######################

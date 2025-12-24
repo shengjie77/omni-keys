@@ -1667,6 +1667,516 @@
     },
     {
       "type": "basic",
+      "conditions": [],
+      "from": {
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 1
+          }
+        }
+      ],
+      "to_after_key_up": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 0
+          }
+        }
+      ],
+      "to_if_alone": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.hold",
+          "value": 1
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18:p"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "b"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "idle"
+          }
+        },
+        {
+          "key_code": "4",
+          "modifiers": [
+            "command",
+            "option",
+            "shift"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "conditions": [],
+      "from": {
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 1
+          }
+        }
+      ],
+      "to_after_key_up": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 0
+          }
+        }
+      ],
+      "to_if_alone": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.hold",
+          "value": 1
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18:p"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "o"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "idle"
+          }
+        },
+        {
+          "key_code": "5",
+          "modifiers": [
+            "command",
+            "option"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "conditions": [],
+      "from": {
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 1
+          }
+        }
+      ],
+      "to_after_key_up": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 0
+          }
+        }
+      ],
+      "to_if_alone": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.hold",
+          "value": 1
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "p"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "seq:f18:p"
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "omni.seq",
+              "value": "idle"
+            }
+          }
+        ]
+      },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 1000
+      }
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18:p"
+        },
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.jetbrains\\.",
+            "^com\\.google\\.android\\.studio$",
+            "com.huawei.devecostudio.ds"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "f"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "idle"
+          }
+        },
+        {
+          "key_code": "1",
+          "modifiers": [
+            "command"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "basic",
       "conditions": [
         {
           "type": "variable_if",
@@ -2740,6 +3250,27 @@
           "type": "variable_if",
           "name": "omni.seq",
           "value": "seq:f18:l"
+        }
+      ],
+      "from": {
+        "any": "key_code"
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.seq",
+            "value": "idle"
+          }
+        }
+      ]
+    },
+    {
+      "type": "basic",
+      "conditions": [
+        {
+          "type": "variable_if",
+          "name": "omni.seq",
+          "value": "seq:f18:p"
         }
       ],
       "from": {
