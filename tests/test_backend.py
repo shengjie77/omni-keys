@@ -200,3 +200,36 @@ def test_backend_sequence_timeout_clears_state() -> None:
             has_timeout_clear = True
 
     assert has_timeout_clear
+
+
+def test_backend_bare_leader_rule_preserves_hold_behavior() -> None:
+    ghostty_rule = RuleIR(
+        trigger=Hotkey(steps=[Chord(keys=["f18"])]),
+        action=Emit(chord=KeyChord(key="g", modifiers={Modifier.CONTROL})),
+        when=When(applications=["^com\\.mitchellh\\.ghostty$"]),
+    )
+    seq_rule = RuleIR(
+        trigger=Hotkey(steps=[Chord(keys=["f18"]), Chord(keys=["w"]), Chord(keys=["v"])]),
+        action=Emit(chord=KeyChord(key="1")),
+    )
+    hold_rule = RuleIR(
+        trigger=Hotkey(steps=[Chord(keys=["f18", "h"])]),
+        action=Emit(chord=KeyChord(key="left_arrow")),
+    )
+
+    backend = KarabinerBackend()
+    out = backend.compile([ghostty_rule, seq_rule, hold_rule], description="test")
+
+    ghostty_tap = out.manipulators[0]
+    assert ghostty_tap.from_.key_code == "f18"
+    assert ghostty_tap.to is not None
+    assert ghostty_tap.to_after_key_up is not None
+    assert ghostty_tap.to_if_alone is not None
+    assert _has_set_variable(ghostty_tap.to, name="omni.hold", value=1)
+    assert _has_set_variable(ghostty_tap.to_after_key_up, name="omni.hold", value=0)
+    assert _has_key_code(ghostty_tap.to_if_alone, "g")
+    assert _has_modifiers(ghostty_tap.to_if_alone, {"control"})
+
+    app_cond = _find_app_condition(ghostty_tap.conditions)
+    assert app_cond is not None
+    assert app_cond.bundle_identifiers == ["^com\\.mitchellh\\.ghostty$"]

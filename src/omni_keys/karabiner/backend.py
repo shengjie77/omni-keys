@@ -37,7 +37,7 @@ class KarabinerBackend:
                     bundle_identifiers=list(rule.when.applications),
                 )
                 for manip in rule_manips:
-                    if _is_leader_hold_manip(manip):
+                    if _is_sequence_leader_root_manip(manip):
                         continue
                     manip.conditions.append(app_cond)
 
@@ -53,6 +53,9 @@ class KarabinerBackend:
             raise ValueError("only Emit action is supported")
 
         if len(step.keys) == 1:
+            if not step.modifiers and step.keys[0] in leader_keys:
+                return _lower_leader_tap_manipulator(rule)
+
             from_event = FromEvent(
                 key_code=step.keys[0],
                 modifiers=_from_modifiers(step.modifiers),
@@ -118,7 +121,32 @@ def _collect_leader_keys(rules: List[RuleIR]) -> Set[str]:
     return leaders
 
 
-def _is_leader_hold_manip(manip: Manipulator) -> bool:
+def _lower_leader_tap_manipulator(rule: RuleIR) -> Manipulator:
+    step = rule.trigger.steps[0]
+    if len(step.keys) != 1 or step.modifiers:
+        raise ValueError("leader tap manipulator requires a single bare leader key")
+    if not isinstance(rule.action, Emit):
+        raise ValueError("only Emit action is supported")
+
+    return Manipulator(
+        from_=FromEvent(
+            key_code=step.keys[0],
+            modifiers=FromModifiers(optional=[Modifier.ANY], mandatory=[]),
+        ),
+        to=[ToEvent(set_variable=Variable(name="omni.hold", value=1))],
+        to_after_key_up=[ToEvent(set_variable=Variable(name="omni.hold", value=0))],
+        to_if_alone=[
+            ToEvent(
+                key_code=rule.action.chord.key,
+                modifiers=_map_modifiers(rule.action.chord.modifiers)
+                if rule.action.chord.modifiers
+                else None,
+            )
+        ],
+    )
+
+
+def _is_sequence_leader_root_manip(manip: Manipulator) -> bool:
     if not manip.to_after_key_up:
         return False
     if not manip.to:
@@ -134,9 +162,18 @@ def _is_leader_hold_manip(manip: Manipulator) -> bool:
             for e in events
         )
 
+    def _has_seq_root(events) -> bool:
+        return any(
+            e.set_variable
+            and e.set_variable.name == "omni.seq"
+            and isinstance(e.set_variable.value, str)
+            and e.set_variable.value.startswith("seq:")
+            for e in events
+        )
+
     return _has_set_var(manip.to, "omni.hold", 1) and _has_set_var(
         manip.to_after_key_up, "omni.hold", 0
-    )
+    ) and _has_seq_root(manip.to_if_alone)
 
 
 def _append_sequence_cancels(manipulators: List[Manipulator]) -> None:

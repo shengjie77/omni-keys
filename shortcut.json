@@ -99,6 +99,50 @@
     },
     {
       "type": "basic",
+      "conditions": [
+        {
+          "type": "frontmost_application_if",
+          "bundle_identifiers": [
+            "^com\\.mitchellh\\.ghostty$"
+          ]
+        }
+      ],
+      "from": {
+        "key_code": "f18",
+        "modifiers": {
+          "mandatory": [],
+          "optional": [
+            "any"
+          ]
+        }
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 1
+          }
+        }
+      ],
+      "to_after_key_up": [
+        {
+          "set_variable": {
+            "name": "omni.hold",
+            "value": 0
+          }
+        }
+      ],
+      "to_if_alone": [
+        {
+          "key_code": "g",
+          "modifiers": [
+            "control"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "basic",
       "conditions": [],
       "from": {
         "key_code": "f18",

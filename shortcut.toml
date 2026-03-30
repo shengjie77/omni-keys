@@ -25,6 +25,16 @@ emit    = "up_arrow"
 trigger = "leader_key+l"
 emit    = "right_arrow"
 
+# Keep this before any F18 sequence groups so Ghostty captures bare F18 first.
+####################### Ghostty #######################
+[[when]]
+applications = ["^com\\.mitchellh\\.ghostty$"]
+
+[[when.rule]]
+trigger = "leader_key"
+emit    = "ctrl+g"
+####################### Ghostty #######################
+
 ####################### Jetbrain IDE #######################
 [[when]]
 applications = [
